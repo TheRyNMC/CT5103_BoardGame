@@ -258,7 +258,7 @@ public class GameController : MonoBehaviour {
         }
     }
 
-    private void GameOver(string winningPlayer) {
+    public void GameOver(string winningPlayer) {
     switch (winningPlayer) {
         case "X":
             winnerText.text = playerXname + " wins!!!";
@@ -278,6 +278,17 @@ public class GameController : MonoBehaviour {
         for (int i = 0; i < tileList.Length; i++) {
             tileList[i].GetComponentInParent<Button>().interactable = state;
         }
+    }
+
+    public void ResetTiles(){
+        foreach (var tile in tileList)
+        {
+            Button button = tileList.GetComponentInParent<Button>();
+            TMP_Text buttonText = tileList.GetComponent<TMP_Text>();
+
+            button.tileEmpty();
+        }
+
     }
 
     public string GetPlayersTurn() {
