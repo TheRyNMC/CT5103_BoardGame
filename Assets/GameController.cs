@@ -45,22 +45,28 @@ public class GameController : MonoBehaviour {
             playerXicon.color = inactivePlayerColor;
         }
 
+
+        playerXInputField.onValueChanged.AddListener(delegate { OnPlayerXNameChanged(); });
+        playerOInputField.onValueChanged.AddListener(delegate { OnPlayerONameChanged(); });
+
+        playerXname = playerXInputField.text;
+        playerOname = playerOInputField.text;
+
         //buttonsToDisable = new List<int> { 6, 7, 8, 11, 12, 13, 16, 17, 18 };
 
         //foreach (int index in buttonsToDisable) {
         //    tileList[index].GetComponentInParent<Button>().interactable = false;
         //}
 
-        //playerXInputField.onValueChanged.AddListener(delegate { OnPlayerXNameChanged(); });
-        //playerOInputField.onValueChanged.AddListener(delegate { OnPlayerONameChanged(); });
 
-        //playerXname = playerXInputField.text;
-        //playerOname = playerOInputField.text;
 
     }
 
     public void Update() {
         bool allTilesHaveText = true; // Initialize to true
+
+
+        
 
         for (int i = 0; i < tileList.Length; i++) {
             TMP_Text buttonText = tileList[i].GetComponent<TMP_Text>();
@@ -78,6 +84,104 @@ public class GameController : MonoBehaviour {
         }
     }
 
+
+    public void OnPlayerXNameChanged() {
+        playerXname = playerXInputField.text;
+    }
+
+    public void OnPlayerONameChanged() {
+        playerOname = playerOInputField.text;
+    }
+
+
+    /// <summary>
+    /// Tiles are numbered 0..24 from left to right, row by row, example:
+    /// [0] [1] [2] [3] [4]
+    /// [5] [6] [7] [8] [9]
+    /// [10][11][12][13][14]
+    /// [15][16][17][18][19]
+    /// [20][21][22][23][24]
+    /// </summary>
+
+    public void EndTurn() {
+        if (tileList[0].text == playerTurn && tileList[1].text == playerTurn && tileList[2].text == playerTurn && tileList[3].text == playerTurn && tileList[4].text == playerTurn) GameOver(playerTurn);
+        else if (tileList[5].text == playerTurn && tileList[6].text == playerTurn && tileList[7].text == playerTurn && tileList[8].text == playerTurn && tileList[9].text == playerTurn) GameOver(playerTurn);
+        else if (tileList[10].text == playerTurn && tileList[11].text == playerTurn && tileList[12].text == playerTurn && tileList[13].text == playerTurn && tileList[14].text == playerTurn) GameOver(playerTurn);
+        else if (tileList[15].text == playerTurn && tileList[16].text == playerTurn && tileList[17].text == playerTurn && tileList[18].text == playerTurn && tileList[19].text == playerTurn) GameOver(playerTurn);
+        else if (tileList[20].text == playerTurn && tileList[21].text == playerTurn && tileList[22].text == playerTurn && tileList[23].text == playerTurn && tileList[24].text == playerTurn) GameOver(playerTurn);
+        else if (tileList[0].text == playerTurn && tileList[5].text == playerTurn && tileList[10].text == playerTurn && tileList[15].text == playerTurn && tileList[20].text == playerTurn) GameOver(playerTurn);
+        else if (tileList[1].text == playerTurn && tileList[6].text == playerTurn && tileList[11].text == playerTurn && tileList[16].text == playerTurn && tileList[21].text == playerTurn) GameOver(playerTurn);
+        else if (tileList[2].text == playerTurn && tileList[7].text == playerTurn && tileList[12].text == playerTurn && tileList[17].text == playerTurn && tileList[22].text == playerTurn) GameOver(playerTurn);
+        else if (tileList[3].text == playerTurn && tileList[8].text == playerTurn && tileList[13].text == playerTurn && tileList[18].text == playerTurn && tileList[23].text == playerTurn) GameOver(playerTurn);
+        else if (tileList[4].text == playerTurn && tileList[9].text == playerTurn && tileList[14].text == playerTurn && tileList[19].text == playerTurn && tileList[24].text == playerTurn) GameOver(playerTurn);
+        else if (tileList[0].text == playerTurn && tileList[6].text == playerTurn && tileList[12].text == playerTurn && tileList[18].text == playerTurn && tileList[24].text == playerTurn) GameOver(playerTurn);
+        else if (tileList[4].text == playerTurn && tileList[8].text == playerTurn && tileList[12].text == playerTurn && tileList[16].text == playerTurn && tileList[20].text == playerTurn) GameOver(playerTurn);
+        else
+            ChangeTurn();
+    }
+
+    public void ChangeTurn() {
+        playerTurn = (playerTurn == "X") ? "O" : "X";
+
+        // Adjust player icon colors based on the current player's turn
+        if (playerTurn == "X") {
+            playerXicon.color = activePlayerColor;
+            playerOicon.color = inactivePlayerColor;
+        }
+        else {
+            playerXicon.color = inactivePlayerColor;
+            playerOicon.color = activePlayerColor;
+        }
+    }
+
+    public void GameOver(string winningPlayer) {
+    switch (winningPlayer) {
+        case "X":
+            winnerText.text = playerXname + " wins!!!";
+            break;
+        case "O":
+            winnerText.text = playerOname + " wins!!!";
+            break;
+        case "D":
+            winnerText.text = "DRAW";
+            break;
+        }
+    endGameState.SetActive(true);
+    ToggleButtonState(false);
+    }
+
+    private void ToggleButtonState(bool state) {
+        for (int i = 0; i < tileList.Length; i++) {
+            tileList[i].GetComponentInParent<Button>().interactable = state;
+        }
+    }
+
+    public void ResetTiles(){
+        foreach (var tile in tileList) {
+            Button button = tile.GetComponentInParent<Button>();
+            TMP_Text buttonText = tile.GetComponent<TMP_Text>();
+
+            buttonText.text = "";
+            button.image.sprite = tileEmpty;
+            button.interactable = true;
+            
+        }
+        playerTurn = "X";
+        playerXicon.color = activePlayerColor;
+        playerOicon.color = inactivePlayerColor;
+    }
+
+    public string GetPlayersTurn() {
+        return playerTurn;
+    }
+
+    public Sprite GetPlayerSprite() {
+        if (playerTurn == "X") return tilePlayerX;
+        else return tilePlayerO;
+    }
+    
+    // Code used to try to build Quixo //
+    
     //public void OnButtonClick0(){
     //    Button button20 = tileList[20].GetComponentInParent<Button>();
     //    Button button4 = tileList[4].GetComponentInParent<Button>();
@@ -204,101 +308,6 @@ public class GameController : MonoBehaviour {
     //    button.interactable = false;
     //    ChangeTurn();
     //}
-
-
-    public void OnPlayerXNameChanged() {
-        playerXname = playerXInputField.text;
-    }
-
-    public void OnPlayerONameChanged() {
-        playerOname = playerOInputField.text;
-    }
-
-
-    /// <summary>
-    /// Tiles are numbered 0..24 from left to right, row by row, example:
-    /// [0] [1] [2] [3] [4]
-    /// [5] [6] [7] [8] [9]
-    /// [10][11][12][13][14]
-    /// [15][16][17][18][19]
-    /// [20][21][22][23][24]
-    /// </summary>
-
-    public void EndTurn() {
-        if (tileList[0].text == playerTurn && tileList[1].text == playerTurn && tileList[2].text == playerTurn && tileList[3].text == playerTurn && tileList[4].text == playerTurn) GameOver(playerTurn);
-        else if (tileList[5].text == playerTurn && tileList[6].text == playerTurn && tileList[7].text == playerTurn && tileList[8].text == playerTurn && tileList[9].text == playerTurn) GameOver(playerTurn);
-        else if (tileList[10].text == playerTurn && tileList[11].text == playerTurn && tileList[12].text == playerTurn && tileList[13].text == playerTurn && tileList[14].text == playerTurn) GameOver(playerTurn);
-        else if (tileList[15].text == playerTurn && tileList[16].text == playerTurn && tileList[17].text == playerTurn && tileList[18].text == playerTurn && tileList[19].text == playerTurn) GameOver(playerTurn);
-        else if (tileList[20].text == playerTurn && tileList[21].text == playerTurn && tileList[22].text == playerTurn && tileList[23].text == playerTurn && tileList[24].text == playerTurn) GameOver(playerTurn);
-        else if (tileList[0].text == playerTurn && tileList[5].text == playerTurn && tileList[10].text == playerTurn && tileList[15].text == playerTurn && tileList[20].text == playerTurn) GameOver(playerTurn);
-        else if (tileList[1].text == playerTurn && tileList[6].text == playerTurn && tileList[11].text == playerTurn && tileList[16].text == playerTurn && tileList[21].text == playerTurn) GameOver(playerTurn);
-        else if (tileList[2].text == playerTurn && tileList[7].text == playerTurn && tileList[12].text == playerTurn && tileList[17].text == playerTurn && tileList[22].text == playerTurn) GameOver(playerTurn);
-        else if (tileList[3].text == playerTurn && tileList[8].text == playerTurn && tileList[13].text == playerTurn && tileList[18].text == playerTurn && tileList[23].text == playerTurn) GameOver(playerTurn);
-        else if (tileList[4].text == playerTurn && tileList[9].text == playerTurn && tileList[14].text == playerTurn && tileList[19].text == playerTurn && tileList[24].text == playerTurn) GameOver(playerTurn);
-        else if (tileList[0].text == playerTurn && tileList[6].text == playerTurn && tileList[12].text == playerTurn && tileList[18].text == playerTurn && tileList[24].text == playerTurn) GameOver(playerTurn);
-        else if (tileList[4].text == playerTurn && tileList[8].text == playerTurn && tileList[12].text == playerTurn && tileList[16].text == playerTurn && tileList[20].text == playerTurn) GameOver(playerTurn);
-        else
-            ChangeTurn();
-    }
-
-    public void ChangeTurn()
-    {
-        playerTurn = (playerTurn == "X") ? "O" : "X";
-
-        // Adjust player icon colors based on the current player's turn
-        if (playerTurn == "X")
-        {
-            playerXicon.color = activePlayerColor;
-            playerOicon.color = inactivePlayerColor;
-        }
-        else
-        {
-            playerXicon.color = inactivePlayerColor;
-            playerOicon.color = activePlayerColor;
-        }
-    }
-
-    public void GameOver(string winningPlayer) {
-    switch (winningPlayer) {
-        case "X":
-            winnerText.text = playerXname + " wins!!!";
-            break;
-        case "O":
-            winnerText.text = playerOname + " wins!!!";
-            break;
-        case "D":
-            winnerText.text = "DRAW";
-            break;
-        }
-    endGameState.SetActive(true);
-    ToggleButtonState(false);
-    }
-
-    private void ToggleButtonState(bool state) {
-        for (int i = 0; i < tileList.Length; i++) {
-            tileList[i].GetComponentInParent<Button>().interactable = state;
-        }
-    }
-
-    public void ResetTiles(){
-        foreach (var tile in tileList)
-        {
-            Button button = tileList.GetComponentInParent<Button>();
-            TMP_Text buttonText = tileList.GetComponent<TMP_Text>();
-
-            button.tileEmpty();
-        }
-
-    }
-
-    public string GetPlayersTurn() {
-        return playerTurn;
-    }
-
-    public Sprite GetPlayerSprite() {
-        if (playerTurn == "X") return tilePlayerX;
-        else return tilePlayerO;
-    }
 
 }
 
