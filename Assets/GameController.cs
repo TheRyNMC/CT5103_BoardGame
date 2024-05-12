@@ -5,6 +5,7 @@ using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
+using static UnityEditor.Experimental.GraphView.GraphView;
 
 
 public class GameController : MonoBehaviour {
@@ -13,6 +14,8 @@ public class GameController : MonoBehaviour {
     public Image playerOicon;
     public TMP_InputField playerXInputField;
     public TMP_InputField playerOInputField;
+    public TMP_Text playerXtext;
+    public TMP_Text playerOtext;
     public TMP_Text winnerText;
 
     [Header("End + Options References")]
@@ -21,6 +24,7 @@ public class GameController : MonoBehaviour {
     [Header("Asset References")]
     public Sprite tilePlayerO;
     public Sprite tilePlayerX;
+    
     public Sprite tileEmpty;
     public TMP_Text[] tileList;
 
@@ -33,7 +37,7 @@ public class GameController : MonoBehaviour {
     private string playerTurn;
     private string playerXname;
     private string playerOname;
-    private List<int> buttonsToDisable;
+    //private List<int> buttonsToDisable;
 
     private void Start() {
         playerTurn = whoPlaysFirst;
@@ -49,8 +53,11 @@ public class GameController : MonoBehaviour {
         playerXInputField.onValueChanged.AddListener(delegate { OnPlayerXNameChanged(); });
         playerOInputField.onValueChanged.AddListener(delegate { OnPlayerONameChanged(); });
 
+        // Initialize player names
         playerXname = playerXInputField.text;
         playerOname = playerOInputField.text;
+        playerXtext.text = playerXname;
+        playerOtext.text = playerOname;
 
         //buttonsToDisable = new List<int> { 6, 7, 8, 11, 12, 13, 16, 17, 18 };
 
@@ -85,12 +92,15 @@ public class GameController : MonoBehaviour {
     }
 
 
-    public void OnPlayerXNameChanged() {
+    public void OnPlayerXNameChanged(){
+
         playerXname = playerXInputField.text;
+        playerXtext.text = playerXname;
     }
 
-    public void OnPlayerONameChanged() {
+    public void OnPlayerONameChanged(){
         playerOname = playerOInputField.text;
+        playerOtext.text = playerOname;
     }
 
 
