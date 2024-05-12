@@ -5,7 +5,7 @@ using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
-using static UnityEditor.Experimental.GraphView.GraphView;
+
 
 
 public class GameController : MonoBehaviour {
@@ -179,6 +179,7 @@ public class GameController : MonoBehaviour {
         playerTurn = "X";
         playerXicon.color = activePlayerColor;
         playerOicon.color = inactivePlayerColor;
+        winnerText.text = "";
     }
 
     public string GetPlayersTurn() {
